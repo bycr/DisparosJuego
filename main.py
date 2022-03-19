@@ -3,123 +3,129 @@ import pygame
 import random
 from colores import dictyonary
 
-# Tamaño de pantalla
-ANCHO = 600
-ALTO = 600
+# screen size
+width_ = 600
+high_ = 600
 
 # FPS
 FPS = 30
 
-
-class Triangulo(pygame.sprite.Sprite):
-    # sprite del jugador
+class Margen(pygame.sprite.Sprite):
     def __init__(self):
-
-        # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
-        # Rectángulo (jugador)
-        # self.image = pygame.Surface((200, 200)) #dibujar un cuadrado en la superficie
         self.image = pygame.image.load("trian.png").convert()
         # Obtiene el rectángulo (sprite)
         self.rect = self.image.get_rect()
-        # Centra el rectángulo (sprite)
-        self.rect.center = (ANCHO // 2, 600)
-        # velocidad del personaje  (inicial)
-        self.velocidad_x = 0
-        self.velocidad_y = 0
+    def update(self, left_, right_):
+        if left_ < 0:
+            self.rect.left = 0
+        if right_ > width_:
+            self.rect.right = width_
 
-    # mover el triangulo
+class Triangle(pygame.sprite.Sprite):
+    # sprite del jugador
+    def __init__(self, margen:Margen):
+        self.margen_ = margen
+        super().__init__()
+        self.image = pygame.image.load("trian.png").convert()
+        self.rect = self.image.get_rect()
+        self.rect.center = (width_ // 2, 600)
+        self.speed_x = 0
+        self.speed_y = 0
+
+    # move the triangle
     def update(self):
-        # velocidad predeterminada cada vuelta del bucle
-        self.velocidad_x = 0
-        self.velocidad_y = 0
 
-        teclas = pygame.key.get_pressed()  # teclas pulsadas
-        if teclas[pygame.K_LEFT]:
-            self.velocidad_x = -6
+        self.speed_x = 0
+        self.speed_y = 0
+
+        keys = pygame.key.get_pressed()  # teclas pulsadas
+        if keys[pygame.K_LEFT]:
+            self.speed_x = -6
             # print(self.velocidad_x)
             # print(self.rect.x)
-        if teclas[pygame.K_RIGHT]:
-            self.velocidad_x = 6
-        if teclas[pygame.K_UP]:
-            self.velocidad_y = -6
-        if teclas[pygame.K_DOWN]:
-            self.velocidad_y = 6
+        if keys[pygame.K_RIGHT]:
+            self.speed_x = 6
+        if keys[pygame.K_UP]:
+            self.speed_y = -6
+        if keys[pygame.K_DOWN]:
+            self.speed_y = 6
 
-        # disparo
+        # Shooting
 
-        if teclas[pygame.K_SPACE]:
-            jugador.disparo()
+        if keys[pygame.K_SPACE]:
+            player__.shooting__()
 
-        # guardar nueva posicion
-        self.rect.x += self.velocidad_x
-        self.rect.y += self.velocidad_y
+        # save new position
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
 
-        # margen lados
-        izquierda = self.rect.left
-        derecha = self.rect.right
+        # margin sides
+        left__ = self.rect.left
+        right__ = self.rect.right
 
+        self.margen_.update(left__, right__)
+        '''
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > ANCHO:
-            self.rect.right = ANCHO
+            self.rect.right = ANCHO'''
 
-        # margen abajo
+        # bottom margin
 
-        if self.rect.bottom > ALTO:
-            self.rect.bottom = ALTO
+        if self.rect.bottom > high_:
+            self.rect.bottom = high_
 
-        # limite superior
+        # upper limit
         if self.rect.top < 200:
             self.rect.top = 200
 
-    def disparo(self):
-        bala = Disparos(self.rect.centerx, self.rect.top)  # posición en centro del rectangulo jugador
-        balas_sprite.add(bala)
+    def shooting__(self):
+        bullet_ = Shots(self.rect.centerx, self.rect.top)  # position in the center of the player rectangle
+        bullets_sprite.add(bullet_)
 
 
-class Enemigos(pygame.sprite.Sprite):
-    # sprite del enemigo
+class Enemies(pygame.sprite.Sprite):
+    # enemy sprite
     def __init__(self):
-        # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
-        self.img_aleatroria = random.randrange(3)
-        if self.img_aleatroria == 0:
+        self.img_random_ = random.randrange(3)
+        if self.img_random_ == 0:
             self.image = pygame.transform.scale(pygame.image.load("circu.png").convert(), (100, 100))
             self.radius = 50
-        if self.img_aleatroria == 1:
+        if self.img_random_ == 1:
             self.image = pygame.transform.scale(pygame.image.load("circu.png").convert(), (50, 50))
             self.radius = 25
-        if self.img_aleatroria == 2:
+        if self.img_random_ == 2:
             self.image = pygame.transform.scale(pygame.image.load("circu.png").convert(), (25, 25))
             self.radius = 12
 
         self.image.set_colorkey(dictyonary.get("NEGRO"))
         self.rect = self.image.get_rect()
-        # posicion circulo
-        self.rect.x = random.randrange(ANCHO - self.rect.width)  # restamos ancho del rectangulo
-        self.rect.y = random.randint(0, 150)  # generar el circulo
+        #circle position
+        self.rect.x = random.randrange(width_ - self.rect.width)  #we subtract width of the rectangle
+        self.rect.y = random.randint(0, 150)  #generate the circle
 
-        self.velocidad_y = random.randrange(1, 4)
+        self.speed__y = random.randrange(1, 4)
 
     def update(self):
-        self.rect.y += self.velocidad_y
-        if self.rect.top > ALTO:
-            self.rect.x = random.randrange(ANCHO - self.rect.width)
+        self.rect.y += self.speed__y
+        if self.rect.top > high_:
+            self.rect.x = random.randrange(width_ - self.rect.width)
             self.rect.y = random.randint(0, 150)
-            self.velocidad_y = random.randrange(1, 4)
+            self.speed__y = random.randrange(1, 4)
 
 
-class Disparos(pygame.sprite.Sprite):
-    # parametros posicion exacta donde genera disparos
+class Shots(pygame.sprite.Sprite):
+    #parameters exact position where it generates shots
     def __init__(self, x, y):
         super().__init__()
         self.image = pygame.transform.scale(pygame.image.load("disparo.jpg").convert(), (10, 20))
-        self.rect = self.image.get_rect()  # obtener rectangulo
-        self.rect.bottom = y  # parte baja
-        self.rect.centerx = x  # centrar en medio rectangulo
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y  # bottom
+        self.rect.centerx = x  # center the rectangle in the middle
 
-    def update(self):  # actualizar posición bala
+    def update(self):  # update bullet position
         self.rect.y -= 25
         if self.rect.bottom < 0:
             self.kill()
@@ -130,19 +136,20 @@ class Base(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("recta.png").convert()
         self.rect = self.image.get_rect()  # get rectangle
-        self.rect.x = random.randrange(ANCHO - 50)
+        self.rect.x = random.randrange(width_ - 50)
         self.rect.y = 550
 
 
-# Inicialización de Pygame, creación de la ventana, título y control de reloj.
+# Pygame initialization, window creation, title and clock control.
 pygame.init()
-pantalla = pygame.display.set_mode((ANCHO, ALTO))
-pygame.display.set_caption("Juego Disparos")
+pantalla = pygame.display.set_mode((width_, high_))
+pygame.display.set_caption("Game shoots")
 clock = pygame.time.Clock()
 
+margenn = Margen()
 
-# grupo de sprites, instanciación de objetos
-enemigos_sprite = pygame.sprite.Group()
+#sprite group, object instantiation
+enemies_sprite = pygame.sprite.Group()
 
 base_sprite = pygame.sprite.Group()
 for indice in range(6):
@@ -150,69 +157,67 @@ for indice in range(6):
     base_sprite.add(base)
 
 for inidice in range(5):
-    enemigo = Enemigos()
-    enemigos_sprite.add(enemigo)
+    enemie__ = Enemies()
+    enemies_sprite.add(enemie__)
 
-balas_sprite = pygame.sprite.Group()
+bullets_sprite = pygame.sprite.Group()
 
-jugador_sprite = pygame.sprite.Group()
-jugador = Triangulo()
-jugador_sprite.add(jugador)
+player_sprite = pygame.sprite.Group()
+player__ = Triangle(margenn)
+player_sprite.add(player__)
 
 ejecutando = True
-vidas = 3
+lives_ = 3
 bases = 6
 while ejecutando:
 
-    # Es lo que especifica la velocidad del bucle de juego
+    # It is what specifies the speed of the game loop
     clock.tick(FPS)
-    # Eventos
+    # Events
     for event in pygame.event.get():
-        # Se cierra y termina el bucle
         if event.type == pygame.QUIT:
             ejecutando = False
 
-    jugador_sprite.update()
-    enemigos_sprite.update()
-    balas_sprite.update()
+    player_sprite.update()
+    enemies_sprite.update()
+    bullets_sprite.update()
     base_sprite.update()
 
-    # objeto jugador, gropo del sprite
-    colision_nave = pygame.sprite.groupcollide(jugador_sprite, enemigos_sprite, False, False)
+    ship_collision = pygame.sprite.groupcollide(player_sprite, enemies_sprite, False, False)
 
-    colision_disparo = pygame.sprite.groupcollide(enemigos_sprite, balas_sprite, True, True)
+    bullet_collision = pygame.sprite.groupcollide(enemies_sprite, bullets_sprite, True, True)
 
-    colisio_base = pygame.sprite.groupcollide(base_sprite, enemigos_sprite, True, False)
+    collision_base = pygame.sprite.groupcollide(base_sprite, enemies_sprite, True, False)
 
-    if colision_nave:
+    if ship_collision:
         # enemigo.kill()
-        vidas -= 1
-        print("colision de la nave " + str(vidas))
-        if vidas <= 0:
-            print("haz perdido")
-            jugador.kill()
+        lives_ -= 1
+        print("ship collision" + str(lives_))
+        if lives_ <= 0:
+            print("You lose")
+            player__.kill()
             sys.exit()
-    if colision_disparo:
-        print("colision disparo ")
-    if colisio_base:
+    if bullet_collision:
+        print("collision shot")
+    if collision_base:
         bases -= 2
-        print("colision base " + str(bases))
+        print("collision base " + str(bases))
         if bases <= 0:
-            print("han destruido tu base, haz perdido")
+            print("they have destroyed your base, you have lost")
             sys.exit()
 
-    # fondo de pantalla
+    # background screen
 
     pantalla.fill(dictyonary.get("NEGRO"))
 
-    jugador_sprite.draw(pantalla)
-    enemigos_sprite.draw(pantalla)
-    balas_sprite.draw(pantalla)
+    player_sprite.draw(pantalla)
+    enemies_sprite.draw(pantalla)
+    bullets_sprite.draw(pantalla)
     base_sprite.draw(pantalla)
-    # lineas de la pantalla
+
     pygame.draw.line(pantalla, dictyonary.get("H_50D2FE"), (300, 0), (300, 600), 1)
     pygame.draw.line(pantalla, dictyonary.get("AZUL"), (0, 300), (800, 300), 1)
-    # Actualiza el contenido de la pantalla.
+
     pygame.display.flip()
 
 pygame.quit()
