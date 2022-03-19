@@ -10,11 +10,10 @@ high_ = 600
 # FPS
 FPS = 30
 
-class Margen(pygame.sprite.Sprite):
+class Margin_(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("trian.png").convert()
-        # Obtiene el rectángulo (sprite)
         self.rect = self.image.get_rect()
     def update(self, left_, right_):
         if left_ < 0:
@@ -24,7 +23,7 @@ class Margen(pygame.sprite.Sprite):
 
 class Triangle(pygame.sprite.Sprite):
     # sprite del jugador
-    def __init__(self, margen:Margen):
+    def __init__(self, margen:Margin_):
         self.margen_ = margen
         super().__init__()
         self.image = pygame.image.load("trian.png").convert()
@@ -146,7 +145,7 @@ pantalla = pygame.display.set_mode((width_, high_))
 pygame.display.set_caption("Game shoots")
 clock = pygame.time.Clock()
 
-margenn = Margen()
+margenn = Margin_()
 
 #sprite group, object instantiation
 enemies_sprite = pygame.sprite.Group()
